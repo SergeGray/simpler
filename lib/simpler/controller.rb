@@ -46,8 +46,15 @@ module Simpler
       @request.params
     end
 
-    def render(template)
-      @request.env['simpler.template'] = template
+    def render(params = {})
+      if params.is_a?(Hash)
+        params.each do |format, value|
+          @request.env['simpler.format'] = format
+          @request.env['simpler.value'] = value
+        end
+      else
+        @request.env['simpler.template'] = params
+      end
     end
 
   end
