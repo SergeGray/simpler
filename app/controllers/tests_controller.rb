@@ -9,5 +9,6 @@ class TestsController < Simpler::Controller
   def plain
     render plain: "What's up"
     status 202
+    headers['Content-Type'] = 'text/plain'
   end
 end
