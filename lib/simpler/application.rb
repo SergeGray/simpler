@@ -32,8 +32,9 @@ module Simpler
 
       controller = route.controller.new(env)
       action = route.action
+      route_params = route.params(env)
 
-      make_response(controller, action)
+      make_response(controller, action, route_params)
     end
 
     private
@@ -52,8 +53,8 @@ module Simpler
       @db = Sequel.connect(database_config)
     end
 
-    def make_response(controller, action)
-      controller.make_response(action)
+    def make_response(controller, action, route_params)
+      controller.make_response(action, route_params)
     end
 
     def not_found(env)
