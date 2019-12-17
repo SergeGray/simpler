@@ -60,6 +60,5 @@ module Simpler
     def not_found(env)
       Controller.new(env).not_found
     end
-
   end
 end

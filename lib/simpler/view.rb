@@ -15,10 +15,10 @@ module Simpler
 
     def render(binding)
       if format
-        send(format, value)
+        [nil, send(format, value)]
       else
-        template = File.read(template_path)
-        ERB.new(template).result(binding)
+        template = File.read(template_path(path_string))
+        [path_string, ERB.new(template).result(binding)]
       end
     end
 
@@ -48,11 +48,14 @@ module Simpler
       text
     end
 
-    def template_path
+    def path_string
       path = template || [controller.name, action].join('/')
-
-      Simpler.root.join(VIEW_BASE_PATH, "#{path}.html.erb")
+      
+      "#{path}.html.erb"
     end
 
+    def template_path(string)
+      Simpler.root.join(VIEW_BASE_PATH, string)
+    end
   end
 end

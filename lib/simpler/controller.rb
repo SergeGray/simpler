@@ -14,13 +14,13 @@ module Simpler
     def make_response(action, route_params)
       @request.env['simpler.controller'] = self
       @request.env['simpler.action'] = action
-      @request.env['simpler.route_params'] = route_params
+      add_params(route_params)
 
       set_default_headers
       send(action)
       write_response
 
-      @response.finish
+      @response
     end
 
     def not_found
@@ -41,8 +41,9 @@ module Simpler
     end
 
     def write_response
-      body = render_body
-
+      path, body = render_body
+      
+      @response.location = path
       @response.write(body)
     end
 
@@ -51,7 +52,7 @@ module Simpler
     end
 
     def params
-      @request.env['simpler.route_params']
+      @request.params
     end
 
     def render(params = {})
@@ -73,6 +74,12 @@ module Simpler
       @response.headers
     end
 
+    def add_params(params)
+      params.each do |key, value|
+        @request.update_param(key, value)
+      end
+    end
+      
     def render_static(page)
       View.render_static(page)
     end
