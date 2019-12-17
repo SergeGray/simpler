@@ -12,9 +12,21 @@ module Simpler
       end
 
       def match?(method, path)
-        @method == method && path.match(@path)
+        @method == method && path.match(path_regex)
       end
 
+      def path_regex
+        @path.gsub(/:[a-z]+/, '\d+')
+      end
+
+      def params(env)
+        path = env['PATH_INFO']
+        param_keys = @path.scan(/:([a-z]+)/).map { |group| group.first.to_sym }
+        param_values = path.scan(/\d+/)
+        return unless param_keys
+
+        Hash[param_keys.zip(param_values)]
+      end
     end
   end
 end

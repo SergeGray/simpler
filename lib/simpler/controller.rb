@@ -11,14 +11,22 @@ module Simpler
       @response = Rack::Response.new
     end
 
-    def make_response(action)
+    def make_response(action, route_params)
       @request.env['simpler.controller'] = self
       @request.env['simpler.action'] = action
+      add_params(route_params)
 
       set_default_headers
       send(action)
       write_response
 
+      @response
+    end
+
+    def not_found
+      set_default_headers
+      status(404)
+      @response.write(render_static('404.html'))
       @response.finish
     end
 
@@ -33,8 +41,9 @@ module Simpler
     end
 
     def write_response
-      body = render_body
-
+      path, body = render_body
+      
+      @response.location = path
       @response.write(body)
     end
 
@@ -46,9 +55,33 @@ module Simpler
       @request.params
     end
 
-    def render(template)
-      @request.env['simpler.template'] = template
+    def render(params = {})
+      if params.is_a?(Hash)
+        params.each do |format, value|
+          @request.env['simpler.format'] = format
+          @request.env['simpler.value'] = value
+        end
+      else
+        @request.env['simpler.template'] = params
+      end
     end
 
+    def status(code)
+      @response.status = code
+    end
+
+    def headers
+      @response.headers
+    end
+
+    def add_params(params)
+      params.each do |key, value|
+        @request.update_param(key, value)
+      end
+    end
+      
+    def render_static(page)
+      View.render_static(page)
+    end
   end
 end
