@@ -8,5 +8,6 @@ class TestsController < Simpler::Controller
   
   def plain
     render plain: "What's up"
+    status 202
   end
 end
