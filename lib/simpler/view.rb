@@ -5,6 +5,10 @@ module Simpler
 
     VIEW_BASE_PATH = 'app/views'.freeze
 
+    def self.render_static(page)
+      File.read(Simpler.root.join('public', page))
+    end
+
     def initialize(env)
       @env = env
     end

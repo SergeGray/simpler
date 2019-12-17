@@ -22,6 +22,13 @@ module Simpler
       @response.finish
     end
 
+    def not_found
+      set_default_headers
+      status(404)
+      @response.write(render_static('404.html'))
+      @response.finish
+    end
+
     private
 
     def extract_name
@@ -63,6 +70,10 @@ module Simpler
 
     def headers
       @response.headers
+    end
+
+    def render_static(page)
+      View.render_static(page)
     end
   end
 end
